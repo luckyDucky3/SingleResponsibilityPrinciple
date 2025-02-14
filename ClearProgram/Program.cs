@@ -86,8 +86,7 @@
             return Answer.Yes;
         }
     }
-
-    // Класс для записи результатов в выходной поток
+    
     public class OutputWriter
     {
         private readonly StreamWriter _output;
@@ -105,8 +104,7 @@
             }
         }
     }
-
-    // Основной класс программы
+    
     internal static class Program
     {
         private static void Main(string[] args)
