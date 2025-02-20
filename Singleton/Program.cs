@@ -1,43 +1,71 @@
 ﻿namespace Singleton;
 
-public class Engine
+using System;
+using System.Collections.Generic;
+
+public class SettingsManager
 {
-    private static Engine? _instance;
-
-    public string Name { get; }
-
-    private Engine(string name)
+    private static SettingsManager? _instance;
+    
+    private readonly Dictionary<string, string> _settings;
+    
+    private SettingsManager()
     {
-        Name = name;
+        _settings = new Dictionary<string, string>
+        {
+            { "Theme", "Dark" },
+            { "Language", "English" },
+            { "Notifications", "Enabled" }
+        };
     }
     
-    public static Engine GetInstance(string name)
+    public static SettingsManager GetInstance()
     {
-        return _instance ??= new Engine(name);
+        if (_instance == null)
+        {
+            _instance = new SettingsManager();
+        }
+        return _instance;
     }
     
-}
-
-public class Car
-{
-    public Engine? Instance;
-
-    public void Collect(string name)
+    public void SetSetting(string key, string value)
     {
-        Instance = Engine.GetInstance(name);
+        if (!_settings.TryAdd(key, value))
+        {
+            _settings[key] = value;
+        }
     }
-    
+
+    public void PrintSettings()
+    {
+        foreach (var setting in _settings)
+        {
+            Console.WriteLine($"{setting.Key}: {setting.Value}");
+        }
+    }
 }
 
 internal static class Program
 {
-    static void Main()
+    public static void Main()
     {
-        Car car = new Car();
-        car.Collect("Двигатель v8.1");
-        Console.WriteLine(car.Instance?.Name);
+        SettingsManager settingsManager = SettingsManager.GetInstance();
         
-        car.Collect("Двигатель v12.0");
-        Console.WriteLine(car.Instance?.Name);
+        Console.WriteLine("Начальные настройки:");
+        settingsManager.PrintSettings();
+        
+        settingsManager.SetSetting("Theme", "Light");
+        
+        SettingsManager anotherSettingsManager = SettingsManager.GetInstance();
+
+        // Проверяем, что это тот же самый экземпляр
+        if (settingsManager == anotherSettingsManager)
+        {
+            Console.WriteLine("\nОба экземпляра одинаковы.");
+        }
+        
+        Console.WriteLine("\nОбновленные настройки:");
+        anotherSettingsManager.PrintSettings();
     }
 }
+
