@@ -32,6 +32,7 @@ public class Configuration
     }
 
     private class SecondarySettings
+    
     {
         public Dictionary<string, string> SecondarySettingsDictionary { get; set; }
         public SecondarySettings()
