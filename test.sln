@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearProgram", "ClearProgra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singleton", "Singleton\Singleton.csproj", "{30827FC6-7B75-4F40-9305-500F17372CBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy loading", "Lazy loading\Lazy loading.csproj", "{04CDBD67-5205-4DDC-BF2C-366890A633EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{30827FC6-7B75-4F40-9305-500F17372CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30827FC6-7B75-4F40-9305-500F17372CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30827FC6-7B75-4F40-9305-500F17372CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04CDBD67-5205-4DDC-BF2C-366890A633EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04CDBD67-5205-4DDC-BF2C-366890A633EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04CDBD67-5205-4DDC-BF2C-366890A633EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04CDBD67-5205-4DDC-BF2C-366890A633EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
