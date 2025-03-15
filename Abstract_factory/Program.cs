@@ -1,4 +1,6 @@
-﻿namespace Abstract_factory;
+﻿using System.Reflection;
+
+namespace Abstract_factory;
 
 public interface IReport
 {
@@ -42,6 +44,22 @@ public class ExcelInvoice : IInvoice
     }
 }
 
+public class WordReport : IReport
+{
+    public void Generate()
+    {
+        Console.WriteLine("Cоздан отчет в формате Word");
+    }
+}
+
+public class WordInvoice : IInvoice
+{
+    public void Create()
+    {
+        Console.WriteLine("Создана счет-фактура в формате Word");
+    }
+}
+
 public interface IDocumentFactory
 {
     IReport CreateReport();
@@ -50,28 +68,24 @@ public interface IDocumentFactory
 
 public class PdfDocumentFactory : IDocumentFactory
 {
-    public IReport CreateReport()
-    {
-        return new PdfReport();
-    }
+    public IReport CreateReport() => new PdfReport();
 
-    public IInvoice CreateInvoice()
-    {
-        return new PdfInvoice();
-    }
+    public IInvoice CreateInvoice() => new PdfInvoice();
 }
 
 public class ExcelDocumentFactory : IDocumentFactory
 {
-    public IReport CreateReport()
-    {
-        return new ExcelReport();
-    }
+    public IReport CreateReport() => new ExcelReport();
 
-    public IInvoice CreateInvoice()
-    {
-        return new ExcelInvoice();
-    }
+    public IInvoice CreateInvoice() => new ExcelInvoice();
+}
+
+public class WordDocumentFactory : IDocumentFactory
+{
+    public IReport CreateReport() => new WordReport();
+    
+
+    public IInvoice CreateInvoice() => new WordInvoice();
 }
 
 public class DocumentGenerator
@@ -92,13 +106,72 @@ public class DocumentGenerator
     }
 }
 
+public static class DocumentSelector
+{
+    private static readonly Dictionary<string, IDocumentFactory?> DocumentFactories = [];
+
+    static DocumentSelector()
+    {
+        int index = 1;
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+        {
+            if (typeof(IDocumentFactory).IsAssignableFrom(type) && !type.IsInterface)
+            {
+                DocumentFactories.Add(index++.ToString(), Activator.CreateInstance(type) as IDocumentFactory);
+            }
+        }
+    }
+
+    public static IDocumentFactory? SelectDocument()
+    {
+        Console.WriteLine(LogOutput.ChooseDocument);
+        foreach (var entry in DocumentFactories)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value?.GetType().Name.Replace("Creator", "")}");
+        }
+        Console.Write(LogOutput.Choose);
+        string choice = Console.ReadLine()!;
+        return (DocumentFactories.GetValueOrDefault(choice));
+    }
+}
+
+public static class LogOutput
+{
+    public const string InvalidChoose = "Неверный выбор. Попробуйте снова";
+    public const string Choose = "Ваш выбор: ";
+    public const string ChooseDocument = "Выберите документ:";
+    public const string Continue = "Продолжить? Y(y)/N(n)";
+}
+
 class Program
 {
-    static void Main(string[] args)
+    private static bool AnalyzeToExit()
     {
-        DocumentGenerator documentGenerator = new DocumentGenerator(new PdfDocumentFactory());
-        documentGenerator.GenerateDocument();
-        documentGenerator = new DocumentGenerator(new ExcelDocumentFactory());
-        documentGenerator.GenerateDocument();
+        Console.WriteLine(LogOutput.Continue);
+        var input = Console.ReadLine();
+        if (input != "y" && input != "Y" && input != "yes" && input != "Yes")
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    static void Main()
+    {
+        while (true)
+        {
+            var factory = DocumentSelector.SelectDocument();
+            if (factory != null)
+            {
+                DocumentGenerator documentGenerator = new DocumentGenerator(factory);
+                documentGenerator.GenerateDocument();
+            }
+            else
+                Console.WriteLine(LogOutput.InvalidChoose);
+
+            var exit = AnalyzeToExit();
+            if (exit)
+                break;
+        }
     }
 }
